@@ -1,1 +1,20 @@
-"credentials.json" 
+# Ignore virtual environments
+myenv/
+.myenv/
+myenv/
+.myenv/
+
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore log files
+*.log
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore IDE and editor files
+.vscode/
+.idea/
+*.swp
