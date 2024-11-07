@@ -49,6 +49,12 @@ if __name__ == "__main__":
     y_pred = pipeline.named_steps['model_trainer'].predict(X_test)
     print(y_pred)
 
+    # Reverse label encoding for the predictions (from transformed to original labels)
+    # Ensure the y_pred is a DataFrame with the same structure as the input DataFrame
+    y_pred_df = pd.DataFrame(y_pred, columns=['fertilizer_name']) 
+    y_pred_original = pipeline.named_steps['label_encoder'].inverse_transform(y_pred_df)
+    print("Predicted Fertilizer Names:", y_pred_original)
+
     # Step 6: Evaluate model performance
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("Classification Report:\n", classification_report(y_test, y_pred))
