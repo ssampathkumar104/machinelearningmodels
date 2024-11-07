@@ -1,6 +1,5 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
 
 class ModelTrainer(BaseEstimator, TransformerMixin):
     def __init__(self, 
@@ -9,30 +8,36 @@ class ModelTrainer(BaseEstimator, TransformerMixin):
                  min_samples_split=2,
                  min_samples_leaf=1,
                  criterion='gini',
-                 bootstrap=True,
-                 model='RandomForest'):
+                 bootstrap=True):
         """
-        Initializes the model with either RandomForest or XGBoost based on the provided parameter.
+        Initializes the RandomForest model with the provided parameters.
         """
-        # Initialize the RandomForestClassifier or XGBClassifier with the provided parameters
+        self.n_estimators = n_estimators
+        self.max_depth = max_depth
+        self.min_samples_split = min_samples_split
+        self.min_samples_leaf = min_samples_leaf
+        self.criterion = criterion
+        self.bootstrap = bootstrap
+
+        # Initialize the RandomForestClassifier with provided parameters
         self.model = RandomForestClassifier(
-            n_estimators=n_estimators,
-            max_depth=max_depth,
-            min_samples_split=min_samples_split,
-            min_samples_leaf=min_samples_leaf,
-            criterion=criterion,
-            bootstrap=bootstrap
-        ) if model == 'RandomForest' else XGBClassifier()
+            n_estimators=self.n_estimators,
+            max_depth=self.max_depth,
+            min_samples_split=self.min_samples_split,
+            min_samples_leaf=self.min_samples_leaf,
+            criterion=self.criterion,
+            bootstrap=self.bootstrap
+        )
 
     def fit(self, X, y):
         """
-        Fits the model to the provided training data.
+        Fits the RandomForest model to the provided training data.
         """
         self.model.fit(X, y)
         return self
     
     def predict(self, X):
         """
-        Makes predictions on the provided data.
+        Makes predictions using the fitted RandomForest model.
         """
         return self.model.predict(X)

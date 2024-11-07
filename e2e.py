@@ -1,7 +1,7 @@
-import pandas as pd
-import pickle as pkl
 from sklearn.pipeline import Pipeline
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
+import pandas as pd
 
 # Import custom transformers and utility classes
 from transformations import LabelEncoderTransformer, StandardScalerTransformer
@@ -21,38 +21,37 @@ if __name__ == "__main__":
     # Step 1: Perform data overview and preprocessing
     df = data_overview(df)  # Apply data overview for basic EDA
 
-    # Preparing the pipeline
-    pipeline = Pipeline([
+    # Step 2: Create preprocessing pipeline (Label Encoding + Scaling)
+    preprocessing_pipeline = Pipeline([
         ('label_encoder', LabelEncoderTransformer()),  # Add label encoding as a stage
-        ('scaling', StandardScalerTransformer()),  # Add standard scaling as a stage
-        ('splitter', DataSplitter(target_feature='fertilizer_name')),
-        ('model_trainer', ModelTrainer(n_estimators=50, max_depth=10, 
-                                       min_samples_split=2, min_samples_leaf=1, 
-                                       criterion='gini', bootstrap=True)),
-        ('model_saver', ModelSaver(filename='final_rf_model.pkl'))
+        ('scaling', StandardScalerTransformer())  # Add standard scaling as a stage
     ])
 
-    # Step 2: Transform the data through encoding and scaling
-    df_transformed = pipeline.named_steps['label_encoder'].fit_transform(df)
-    df_transformed = pipeline.named_steps['scaling'].fit_transform(df_transformed)
+    # Transform data using preprocessing pipeline
+    df_transformed = preprocessing_pipeline.fit_transform(df)
 
     # Split the dataset into training and testing sets
-    X_train, X_test, y_train, y_test = pipeline.named_steps['splitter'].fit_transform(df_transformed)
+    splitter = DataSplitter(target_feature='fertilizer_name')
+    X_train, X_test, y_train, y_test = splitter.fit_transform(df_transformed)
 
-    # Step 3: Fit the model
-    pipeline.named_steps['model_trainer'].fit(X_train, y_train)
+    # Print transformed labels for verification
+    print(y_train)
+
+    # Step 3: Initialize and train the model
+    model_trainer = ModelTrainer(n_estimators=50, max_depth=10, min_samples_split=2, min_samples_leaf=1, criterion='gini', bootstrap=True)
+    model_trainer.fit(X_train, y_train)
 
     # Step 4: Save the model after training
-    pipeline.named_steps['model_saver'].transform(X_test, pipeline.named_steps['model_trainer'].model)
+    model_saver = ModelSaver(filename='final_rf_model.pkl')
+    model_saver.transform(X_test, model_trainer.model)
 
     # Step 5: Make predictions using the test data
-    y_pred = pipeline.named_steps['model_trainer'].predict(X_test)
-    print(y_pred)
+    y_pred = model_trainer.predict(X_test)
+    print("Predictions:", y_pred)
 
     # Reverse label encoding for the predictions (from transformed to original labels)
-    # Ensure the y_pred is a DataFrame with the same structure as the input DataFrame
-    y_pred_df = pd.DataFrame(y_pred, columns=['fertilizer_name']) 
-    y_pred_original = pipeline.named_steps['label_encoder'].inverse_transform(y_pred_df)
+    y_pred_df = pd.DataFrame(y_pred, columns=['fertilizer_name'])
+    y_pred_original = preprocessing_pipeline.named_steps['label_encoder'].inverse_transform(y_pred_df)
     print("Predicted Fertilizer Names:", y_pred_original)
 
     # Step 6: Evaluate model performance
