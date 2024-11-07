@@ -34,8 +34,17 @@ if __name__ == "__main__":
     splitter = DataSplitter(target_feature='fertilizer_name')
     X_train, X_test, y_train, y_test = splitter.fit_transform(df_transformed)
 
-    # Print transformed labels for verification
-    print(y_train)
+    print('y_train data type:', y_train.dtype)
+    y_train = pd.Series(y_train).astype('category')  # Convert to category type
+    print('y_train after conversion to category:', y_train.dtype)
+    print("Unique values in y_train:", y_train.unique())
+    print("Value counts in y_train:", y_train.value_counts())
+    print('Shape of y_train:', y_train.shape)
+    if len(y_train.shape) > 1:
+        y_train = y_train.flatten()
+    print("Data type check for unique labels:", y_train.apply(type).unique())
+    y_train = pd.Series(y_train).astype(int)  # Ensure it is treated as an integer
+    print("y_train after conversion:", y_train.head())
 
     # Step 3: Initialize and train the model
     model_trainer = ModelTrainer(n_estimators=50, max_depth=10, min_samples_split=2, min_samples_leaf=1, criterion='gini', bootstrap=True)
