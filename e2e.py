@@ -12,6 +12,7 @@ from dataUtils import load_data  # Load data function from dataUtils.py
 from dataAnalysis import data_overview  # Import data overview function
 
 if __name__ == "__main__":
+
     # Load data configuration and dataset
     input_details = load_data()  # Load input details from configuration
     file_id = input_details['file_id']
@@ -66,3 +67,5 @@ if __name__ == "__main__":
     # Step 6: Evaluate model performance
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("Classification Report:\n", classification_report(y_test, y_pred))
+
+    

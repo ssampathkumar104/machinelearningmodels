@@ -5,7 +5,7 @@ import time
 
 # Dummy input_df
 input_data = {
-    'temperature': 30,
+    'temparature': 30,
     'humidity': 80,
     'moisture': 15,
     'nitrogen': 10,
@@ -30,16 +30,15 @@ def app():
         st.subheader("Enter the details for prediction")
 
         # Numerical input fields for features
-        temperature = st.number_input("Temperature (°C)", min_value=-50, max_value=50, value=input_data['temperature'])
+        temparature = st.number_input("Temperature (°C)", min_value=-50, max_value=50, value=input_data['temparature'])
         humidity = st.number_input("Humidity (%)", min_value=0, max_value=100, value=input_data['humidity'])
         moisture = st.number_input("Moisture (%)", min_value=0, max_value=100, value=input_data['moisture'])
-        nitrogen = st.number_input("Nitrogen (ppm)", min_value=0, max_value=100, value=input_data['nitrogen'])
-        potassium = st.number_input("Potassium (ppm)", min_value=0, max_value=100, value=input_data['potassium'])
-        phosphorous = st.number_input("Phosphorous (ppm)", min_value=0, max_value=100, value=input_data['phosphorous'])
-
         # Categorical input fields for soil and crop types
         soil_type = st.selectbox("Soil Type", soil_types, index=soil_types.index(input_data['soil_type']))
         crop_type = st.selectbox("Crop Type", crop_types, index=crop_types.index(input_data['crop_type']))
+        nitrogen = st.number_input("Nitrogen (ppm)", min_value=0, max_value=100, value=input_data['nitrogen'])
+        potassium = st.number_input("Potassium (ppm)", min_value=0, max_value=100, value=input_data['potassium'])
+        phosphorous = st.number_input("Phosphorous (ppm)", min_value=0, max_value=100, value=input_data['phosphorous'])
 
         submit_button = st.form_submit_button("Predict Fertilizer")
 
@@ -51,7 +50,7 @@ def app():
 
             # Prepare the input DataFrame
             input_df = pd.DataFrame({
-                'temperature': [temperature],
+                'temparature': [temparature],
                 'humidity': [humidity],
                 'moisture': [moisture],
                 'nitrogen': [nitrogen],
@@ -62,7 +61,7 @@ def app():
             })
 
             # Load the model (you can replace this with your actual model)
-            with open('./model/fertilizer_model.pkl', 'rb') as f:
+            with open('C:\\code\\ml\\ds-projects\\machinelearning\\machinelearningmodels\\final_rf_model.pkl', 'rb') as f:
                 model = pickle.load(f)
 
             # Make the prediction (assuming the model has the `predict` method)
